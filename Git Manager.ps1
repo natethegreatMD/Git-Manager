@@ -121,7 +121,7 @@ function Test-BranchCompatibility {
     $deletedFiles = git diff --name-only --diff-filter=D $targetBranch...$sourceBranch 2>$null
     if ($deletedFiles) {
         $issues += "DELETED_FILES"
-        Write-Host "   ⚠️  Files deleted in $sourceBranch that exist in $targetBranch:" -ForegroundColor Red
+        Write-Host "   ⚠️  Files deleted in $sourceBranch that exist in ${targetBranch}:" -ForegroundColor Red
         $deletedFiles | ForEach-Object { 
             Write-Host "      • $_" -ForegroundColor Red
             # Check if it's a critical file
@@ -314,12 +314,12 @@ function Test-BranchDivergence {
     
     if ($totalDivergence -gt 50) {
         $suggestReplace = $true
-        $reasons += "High total divergence ($totalDivergence commits)"
+        $reasons += "High total divergence (${totalDivergence} commits)"
     }
     
     if ($behindCount -gt 30 -and $aheadCount -gt $behindCount) {
         $suggestReplace = $true
-        $reasons += "Working branch significantly ahead ($aheadCount vs $behindCount)"
+        $reasons += "Working branch significantly ahead (${aheadCount} vs ${behindCount})"
     }
     
     if ($divergenceRatio -gt 3 -and $aheadCount -gt 20) {
@@ -334,7 +334,7 @@ function Test-BranchDivergence {
     
     if ($structuralChanges -gt 20) {
         $suggestReplace = $true
-        $reasons += "Major structural changes ($addedFiles added, $deletedFiles deleted files)"
+        $reasons += "Major structural changes (${addedFiles} added, ${deletedFiles} deleted files)"
     }
     
     return @{
@@ -423,7 +423,7 @@ function Invoke-BranchReplace {
         
         # Step 2: Force push source branch to target
         Write-Host "   2️⃣ Force pushing $sourceBranch to replace $targetBranch" -ForegroundColor Cyan
-        git push origin $sourceBranch`:$targetBranch --force-with-lease
+        git push origin $sourceBranch:$targetBranch --force-with-lease
         Write-Host "      ✅ Remote $targetBranch updated" -ForegroundColor Green
         
         # Step 3: Update local target branch
